@@ -73,11 +73,15 @@ class LDAPManager
 
         $messages = ['ldapuri' => $ldapuri];
 
-        log_message('info', 'LdapConnect: To LdapUri {ldapuri}', $messages);
+        log_message('info', 'LDAP connect to LdapUri {ldapuri}', $messages);
 
         $this->connection = @ldap_connect($ldapuri);
 
-        log_message('error', json_encode(ldap_error($this->connection)));
+        if ($this->connection) {
+            log_message('info', 'LDAP connect: syntactic check of the provided parameter successful');            
+        } else {
+            log_message('error', 'LDAP connect: syntactic check failed. please check ldap parameter');
+        }
 
         if ($this->isConnected()) {
             $this->auth();
@@ -118,7 +122,13 @@ class LDAPManager
 
         $this->bind = @ldap_bind($this->connection, $ldap_user, $this->password);
 
-        log_message('error', json_encode(ldap_error($this->connection)));
+        if (ldap_error($this->connection) !== "Success") {
+            $errno = strval(ldap_errno($this->connection));
+            $error = json_encode(ldap_error($this->connection));
+            log_message('error', 'LDAP auth Error #{errno}: {error}', ['errno' => $errno, 'error' => $error]);
+        } else {
+            log_message('info', 'LDAP auth successful');
+        }
     }
 
     /**
