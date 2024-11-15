@@ -50,6 +50,7 @@ composer require rakoitde/shieldldap dev-develop
     authldap.use_ldaps              = true
     authldap.username               = 
     authldap.password               = 
+    authldap.ldap_user_format_upn   = false
     ```
 
 2. Check your config
@@ -65,6 +66,7 @@ composer require rakoitde/shieldldap dev-develop
       ldaps_port:             636
       use_ldaps:              true
       ldap_domain:            your-domain
+      ldap_format_username:   your-domain\username (Down-Level Logon Name)
       search_base:            dc=your-domain,dc=local
       storePasswordInSession: true
       attributes:             objectSID, distinguishedname, displayName, title, description, cn, givenName, sn, mail, co, telephoneNumber, mobile, company, department, l, postalCode, streetAddress, displayName, samaccountname, thumbnailPhoto, userAccountControl
@@ -140,6 +142,7 @@ composer require rakoitde/shieldldap dev-develop
     authldap.use_ldaps              = true
     authldap.username               = 
     authldap.password               = 
+    authldap.ldap_user_format_upn   = false
     ```
 
 2. Auth.php
