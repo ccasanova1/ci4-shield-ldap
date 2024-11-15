@@ -36,7 +36,6 @@ class LDAPManager
     public const UAC_PASSWORD_EXPIRED               = 8388608;   // hex = 0x800000
     public const UAC_TRUSTED_TO_AUTH_FOR_DELEGATION = 16777216;   // hex = 0x1000000
     public const UAC_PARTIAL_SECRETS_ACCOUNT        = 67108864;   // hex = 0x04000000
-    public const LDAP_FORMAT_USERNAME_DEFAULT       = 'DLN';   // Down-Level Logon Name (domain\\username)
 
     protected string $username;
     protected string $password;
@@ -115,17 +114,12 @@ class LDAPManager
      */
     public function auth()
     {
-        $ldap_domain = config('AuthLDAP')->ldap_domain;
-        $ldap_user_format = config('AuthLDAP')->ldap_user_format ?? self::LDAP_FORMAT_USERNAME_DEFAULT;
+        $ldap_domain          = config('AuthLDAP')->ldap_domain;
+        $ldap_user_format_upn = config('AuthLDAP')->ldap_user_format_upn ?? false;
 
-        switch ($ldap_user_format) {
-            case 'UPN':
-                $ldap_user = $this->username . '@' . $ldap_domain;
-                break;
-            case 'DLN':
-            default:
-                $ldap_user = $ldap_domain . '\\' . $this->username;
-                break;
+        $ldap_user = $ldap_domain . '\\' . $this->username;
+        if ($ldap_user_format_upn) {
+            $ldap_user = $this->username . '@' . $ldap_domain;
         }
 
         ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);

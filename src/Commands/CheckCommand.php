@@ -89,7 +89,7 @@ class CheckCommand extends BaseCommand
         CLI::write('  ldaps_port:             ' . CLI::color($ldapConfig->ldaps_port, 'white'), 'green');
         CLI::write('  use_ldaps:              ' . CLI::color($ldapConfig->use_ldaps ? 'true' : 'false', 'white'), 'green');
         CLI::write('  ldap_domain:            ' . CLI::color($ldapConfig->ldap_domain, 'white'), 'green');
-        CLI::write('  ldap_format_username:   ' . CLI::color($ldapConfig->ldap_user_format  . ' (' . $this->getLdapFormatDescription($ldapConfig->ldap_user_format) . ')', 'white'), 'green');
+        CLI::write('  ldap_format_username:   ' . CLI::color('(' . $this->getLdapFormatDescription($ldapConfig->ldap_user_format_upn) . ')', 'white'), 'green');
         CLI::write('  search_base:            ' . CLI::color($ldapConfig->search_base, 'white'), 'green');
         CLI::write('  storePasswordInSession: ' . CLI::color($ldapConfig->storePasswordInSession ? 'true' : 'false', 'white'), 'green');
         CLI::write('  attributes:             ' . CLI::color(implode(', ', $ldapConfig->attributes), 'white'), 'green');
@@ -188,16 +188,11 @@ class CheckCommand extends BaseCommand
     public function bind()
     {
         $ldap_domain = config('AuthLDAP')->ldap_domain;
-        $ldap_user_format = config('AuthLDAP')->ldap_user_format ?? 'DLN';
+        $ldap_user_format_upn = config('AuthLDAP')->ldap_user_format_upn ?? false;
 
-        switch ($ldap_user_format) {
-            case 'UPN':
-                $ldap_user = $this->username . '@' . $ldap_domain;
-                break;
-            case 'DLN':
-            default:
-                $ldap_user = $ldap_domain . '\\' . $this->username;
-                break;
+        $ldap_user = $ldap_domain . '\\' . $this->username;
+        if ($ldap_user_format_upn) {
+            $ldap_user = $this->username . '@' . $ldap_domain;
         }
 
         CLI::write('  bind user:       ' . CLI::color($this->username, 'white'), 'green');
@@ -223,13 +218,10 @@ class CheckCommand extends BaseCommand
     /**
      * Get LDAP format username description
      */
-    private function getLdapFormatDescription(string $format): string
+    private function getLdapFormatDescription(bool $ldap_user_format = false): string
     {
-        $descriptions = [
-            'UPN' => 'User Principal Name (username@domain)',
-            'DLN' => 'Down-Level Logon Name (domain\\username)',
-        ];
-
-        return $descriptions[$format] ?? 'Unknown format';
+        return $ldap_user_format 
+            ? 'username@domain (User Principal Name)'
+            : 'domain\username (Down-Level Logon Name)';
     }
 }
