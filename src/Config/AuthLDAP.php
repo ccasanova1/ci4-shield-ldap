@@ -17,7 +17,6 @@ class AuthLDAP extends BaseConfig // class AuthLDAP extends ShieldAuthLDAP
     public const RECORD_LOGIN_ATTEMPT_NONE    = 0; // Do not record at all
     public const RECORD_LOGIN_ATTEMPT_FAILURE = 1; // Record only failures
     public const RECORD_LOGIN_ATTEMPT_ALL     = 2; // Record all login attempts
-    
     public const FORMAT_AUTHENTICATION_DLN    = 'DLN';  // Down-Level Logon Name (domain\username)
     public const FORMAT_AUTHENTICATION_UPN    = 'UPN';  // User Principal Name (username@domain)
 
@@ -66,7 +65,7 @@ class AuthLDAP extends BaseConfig // class AuthLDAP extends ShieldAuthLDAP
      * - self::FORMAT_AUTHENTICATION_DLN - domain\username (default)
      * - self::FORMAT_AUTHENTICATION_UPN - username@domain
      */
-    public $ldap_user_format = self::FORMAT_AUTHENTICATION_DLN;
+    public string $ldap_user_format = self::FORMAT_AUTHENTICATION_DLN;
 
     /**
      * The ldaps searchbase like "dc=int,dc=company,dc=local"
