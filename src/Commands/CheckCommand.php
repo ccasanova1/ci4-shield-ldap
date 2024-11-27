@@ -229,8 +229,8 @@ class CheckCommand extends BaseCommand
     private function getLdapFormatDescription(string $format): string
     {
         $descriptions = [
-            'UPN' => 'User Principal Name (username@domain)',
-            'DLN' => 'Down-Level Logon Name (domain\\username)',
+            'UPN' => 'User Principal Name (username@your-domain)',
+            'DLN' => 'Down-Level Logon Name (your-domain\\username)',
         ];
 
         return $descriptions[$format] ?? 'Unknown format';
